@@ -19,7 +19,6 @@ object console {
       case tree: parsers.Failure => throw new SyntaxException(tree)
       case _ => {
         val exp = tree.get  // get the expression from the tree
-            //println("translation: " + exp.emit)
         val result = exp.execute(globalEnv)  // execute the expression
         result.toString  // return string representation of result
       }

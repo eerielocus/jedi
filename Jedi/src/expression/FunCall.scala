@@ -3,8 +3,8 @@ package expression
 import context._
 import value._
 
-case class FunCall(op: Identifier, operands: List[Expression]) extends Expression {
+case class FunCall(val id: Identifier, val exps: List[Expression]) extends Expression {
   override def execute(env: Environment): Value = {
-    alu.execute(op, operands.map(operand => operand.execute(env)))
+    alu.execute(id, exps.map(exp => exp.execute(env)))
   }
 }

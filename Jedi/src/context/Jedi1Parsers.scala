@@ -73,7 +73,7 @@ class Jedi1Parsers extends RegexParsers {
   }
   
   // generates left-to-right calls to mul and div:
-  private  def parseProduct(t: Expression, terms: List[~[String, Expression]]): Expression = {
+  private def parseProduct(t: Expression, terms: List[~[String, Expression]]): Expression = {
      terms match {
        case Nil => t
        case ~("*", t1)::more => parseProduct(FunCall(Identifier("mul"), List(t, t1)), more)
@@ -81,7 +81,7 @@ class Jedi1Parsers extends RegexParsers {
      }
   }
       
-  def term: Parser[Expression]  = funCall | literal | "("~>expression<~")"
+  def term: Parser[Expression] = funCall | literal | "(" ~> expression <~ ")"
    
   def literal = boole | real | integer | chars | identifier
   
@@ -91,13 +91,13 @@ class Jedi1Parsers extends RegexParsers {
   }
  
  // integer ::= 0|(\+|-)?[1-9][0-9]*
-  def integer: Parser[Integer] = """0|(\+|-)?[1-9][0-9]""".r ^^ {
+  def integer: Parser[Integer] = """0|(\+|-)?[1-9][0-9]*""".r ^^ {
     case int => Integer(int.toInt)
   }
  
  // real ::= (\+|-)?[0-9]+\.[0-9]+
   def real: Parser[Real] =  """(\+|-)?[0-9]+\.[0-9]+""".r ^^ {
-    case re => Real(re.toDouble)
+    case num => Real(num.toDouble)
   }
  
  // boole ::= true|false
@@ -119,6 +119,6 @@ class Jedi1Parsers extends RegexParsers {
   def operands: Parser[List[Expression]] = "(" ~> opt(expression ~ rep("," ~> expression)) <~ ")" ^^ {
     case Some(op ~ Nil) => List(op)
     case Some(op ~ more) => op::more
-    case None => List()
+    case _ => List()
   }
 }

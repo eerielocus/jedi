@@ -16,13 +16,13 @@ object alu {
     opcode.name match {
       case "add" => add(args)
       case "mul" => mul(args)
-      //case "sub" => sub(args)
-      //case "div" => div(args)
+      case "sub" => sub(args)
+      case "div" => div(args)
       case "less" => less(args) //binary
-      //case "more" => more(args) // binary
-      //case "equals" => equals(args) // note: equals(7, true) = false, not error
-      //case "unequals" => unequals(args) // binary, = not(equals(args))?
-      //case "not" => not(args) // unary 
+      case "more" => more(args) // binary
+      case "equals" => equals(args) // note: equals(7, true) = false, not error
+      case "unequals" => unequals(args) // binary, = not(equals(args))?
+      case "not" => not(args) // unary 
       // primitive I/O ops:
       case "write" => write(args)
       case "prompt" => prompt(args)
@@ -52,7 +52,7 @@ object alu {
         val args4 = args.map(toChars).filter(_ != None)
         if (args4.size == args.size) args4.flatten.reduce(_+_)
         else {
-          throw new TypeException("Inputs to + must be numbers or texts")
+          throw new TypeException("Inputs to + must be numbers or texts.")
         }
       }
     }
@@ -63,15 +63,39 @@ object alu {
     if (args2.size == args.size) args2.flatten.reduce(_*_)
     else {
       val args3 = args.map(toReal).filter(_ != None)
-      if (args3 == args.size) args3.flatten.reduce(_*_)
+      if (args3.size == args.size) args3.flatten.reduce(_*_)
       else{
-        throw new TypeException("Inputs to * must be numbers")
+        throw new TypeException("Inputs to * must be numbers.")
+      }
+    }
+  }
+  
+  private def sub(args: List[Value]) = {
+    val args2 = args.map(toInt).filter(_ != None)
+    if (args2.size == args.size) args2.flatten.reduce(_-_)
+    else {
+      val args3 = args.map(toReal).filter(_ != None)
+      if (args3.size == args.size) args3.flatten.reduce(_-_)
+      else{
+        throw new TypeException("Inputs to - must be numbers.")
+      }
+    }
+  }
+  
+  private def div(args: List[Value]) = {
+    val args2 = args.map(toInt).filter(_ != None)
+    if (args2.size == args.size) args2.flatten.reduce(_/_)
+    else {
+      val args3 = args.map(toReal).filter(_ != None)
+      if (args3.size == args.size) args3.flatten.reduce(_/_)
+      else{
+        throw new TypeException("Inputs to / must be numbers.")
       }
     }
   }
   
   def less(args: List[Value]): Value = {
-    if (args.length  != 2) throw new TypeException("less expects two inputs")
+    if (args.length != 2) throw new TypeException("Less expects two inputs.")
     val args2 = args.map(toInt).filter(_ != None)
     if (args2.size == args.size) Boole(args2(0) < args2(1))
     else {
@@ -80,12 +104,42 @@ object alu {
       else {
         val args4 = args.map(toChars).filter(_ != None)
         if (args4.size == args.size) Boole(args4(0) < args4(1))
-        else throw new TypeException("Inputs to < must be numbers or texts")
+        else throw new TypeException("Inputs to < must be numbers or texts.")
       }
     }
   }  
   
- 
+  def more(args: List[Value]): Value = {
+    if (args.length != 2) throw new TypeException("More expects two inputs.")
+    val args2 = args.map(toInt).filter(_ != None)
+    if (args2.size == args.size) Boole(args2(0) > args2(1))
+    else {
+      val args3 = args.map(toReal).filter(_ != None)
+      if (args3.size == args.size) Boole(args3(0) > args3(1))
+      else {
+        val args4 = args.map(toChars).filter(_ != None)
+        if (args4.size == args.size) Boole(args4(0) > args4(1))
+        else throw new TypeException("Inputs to > must be numbers or texts.")
+      }
+    }
+  } 
+  
+  def equals(args: List[Value]): Value = {
+    if (args.length != 2) throw new TypeException("Equals expects two inputs.")
+    Boole(args.forall(_ == args(0)))
+  }
+  
+  def unequals(args: List[Value]): Value = {
+    if (args.length != 2) throw new TypeException("Unequals expects two inputs.")
+    !Boole(args.forall(_ == args(0)))
+  }
+  
+  def not(args: List[Value]): Value = {
+    if (args.length != 2) throw new TypeException("Not expects two inputs.")
+    if (args(0).isInstanceOf[Boole]) !Boole(args(0).asInstanceOf[Boole].value)
+    else throw new TypeException("Inputs to ! expects a Boole.")
+  }
+  
   def write(vals: List[Value]): Value = { println(vals(0)); Notification.DONE }
   def read(vals: List[Value]): Value = { val result = io.StdIn.readDouble(); Real(result)}
   def prompt(vals: List[Value]): Value = { print("=> "); Notification.DONE }
