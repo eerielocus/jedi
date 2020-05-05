@@ -13,7 +13,7 @@ case class FunCall(val operator: Identifier, val operands: List[Expression]) ext
     if (env.contains(operator)) {
       operator.execute(env) match {
         case f: Thunk => f(env)
-        case f: Closure => f.apply(args)
+        case f: Closure => f.apply(args, env)
         case _ => throw new TypeException("Only functions can be called.")
       }
     } else {

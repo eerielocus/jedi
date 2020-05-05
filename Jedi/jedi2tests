@@ -1,18 +1,81 @@
-def sum = add(mul(3, 4), sub(9, 1))
-sum
-3 * 4 + 9
-3 * (4 + 9)
-add(3, 4.0)
-sub(3, 4)
-sub(3, -4)
+write("testing alu functions")
+1 + 2 + 3 + 4 + 5
+1 + 2 * 3
+(1 + 2) * 3
+1 + 2.1
+2.1 + 1
+3 - 4
 3 - -4
-def pi = 3.14
-def e = 2.7
-pi * e + sum
+3 / 4
+3.0 / 4
+"cat" + "fish"
 3 < 4
-3 == 4
+3 > 4
 3 != 4
-3 + (if(sum < 19) 8 else 3)
-if (sum < 19) nada else 3
-3 < 4 && 1 + 1 == 2 && sum < 19 && nada
-4 < 3 || 1 + 1 != 2 || sum < 19 ||  true || nada
+3 == 4
+3 == true
+3 == 2 + 1 == 9 / 3
+write("testing definitions")
+def x = 3 + 4 * 5
+def y = x - 2
+x + y
+x + y < 22
+write("testing special forms")
+x > 20 && true && y == 21 && 1 == 0 && nada
+x < 20 || false ||y != 21 || 1 == 1 || nada
+if (x < 7) nada else 100
+if (x > 7) "pass" else "fail"
+if (x < 7) "pass"
+write("jedi 2 tests")
+def pi = 3.14
+def pi2 = {def x = 2; 2 * pi}
+write(pi2)
+def fun1 = lambda(x, y) 3 * x + 2 * y
+fun1(5, 7)
+def tri = lambda(n) if (n == 0) 0 else n + tri(n - 1)
+tri(5)
+tri(6)
+def square = lambda(x) x * x
+def addx = lambda(x) lambda(y) x + y
+def add5 = addx(5)
+add5(9)
+def compose = lambda(f, g) lambda(z) f(g(z))
+def add5square = compose(square, add5)
+add5square(3)
+def fun2 = {def x = 10; lambda(y) x * y}
+fun2(5.5)
+def fun3 = lambda (y) { def x = 10; x * y}
+fun3(5.5)
+write("testing jedi 3.0")
+def count = var(0)
+count
+[count]
+
+def incCount = lambda() count = [count] + 1
+
+incCount()
+incCount()
+count
+
+while ([count] < 10) { write("calling incCount"); incCount() }
+count
+
+def tri = lambda (n) { def result = var(0); def count = var(0); while([count] < n + 1) { result = [result] + [count]; count = [count] + 1}; [result]}
+
+tri(5)
+tri(6)
+
+def scores = store(85, 23, 99, 56)
+scores
+get(1, scores)
+put(60, 2, scores)
+scores
+
+def scores2 = map(lambda(x) x + 1, scores)
+scores2
+
+def scores3 = filter(lambda(x) 70 < x, scores2)
+scores3
+
+def print = lambda(s) { def i = var(size(s) - 1); while(-1 < [i]) {write(get([i], s)); i = [i] - 1}}
+print(scores)
