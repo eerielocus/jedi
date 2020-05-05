@@ -3,14 +3,13 @@ package expression
 import context._
 import value._
 
-case class Conditional(condition: Expression, consequent: Expression, alternative: Expression = null) extends Expression {
+case class Conditional(val condition: Expression, val consequent: Expression, val alternative: Expression = null) extends Expression {
   override def execute(env: Environment): Value = {
-    val res: Value = condition.execute(env)
-    if(!res.isInstanceOf[Boole]) Notification.UNSPECIFIED
+    val res = condition.execute(env)
+    if (!res.isInstanceOf[Boole]) throw new TypeException("Condition must be a Boole.")
     
-    val bool = res.asInstanceOf[Boole].value
-    if(bool) consequent.execute(env)
-    else if(alternative != null) alternative.execute(env)
-    else Notification.DONE
+    if (res.asInstanceOf[Boole].value) consequent.execute(env)
+    else if (alternative != null) alternative.execute(env)
+    else Notification.UNSPECIFIED
   }
 }
